@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SJ ENTERTAINMENT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="hero-section">
+        <header class="main-header">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-sj">SJ</span>
+                    <span class="logo-text">ENTERTAINMENT</span>
+                </a>
+            </div>
+
+            <nav class="topnav" id="myLinks">
+                <a href="index.html">Home</a>
+                <a href="Games.html">Games</a>
+                <a href="index.html">Contact</a>
+                <a href="index.html">About</a>
+            </nav>
+           
+
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <div class="hamburger-icon"></div>
+            </a>
+        </header>
+         <div class="information" align="center">
+                <p>Go To Play Games</p>
+                <button class="Play"><a href="Games.html">Play</a></button>
+            </div>
+        <footer>
+        <div class="creator-info">
+            <div class="info-box">
+                <p>CREATOR: SIPIRAJ</p>
+                <p>EMAIL: SIPIRAJ@GMAIL.COM</p>
+            </div>
+        </div>
+        </footer>
+    </div>
+
+    <script>
+        function myFunction() {
+          var x = document.getElementById("myLinks");
+          if (x.style.display === "block") {
+            x.style.display = "none";
+          } else {
+            x.style.display = "block";
+          }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SJ Games - 8 Puzzle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Styles for Professional Look */
+        body {
+            margin: 0;
+            font-family: 'Electrolize', sans-serif;
+            color: white;
+            background-color: #0d0d0d; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-area {
+            text-align: center;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            box-shadow: 0 0 40px rgba(0, 188, 212, 0.3);
+        }
+
+        h1 {
+            color: #00bcd4;
+            text-shadow: 0 0 5px #00bcd4;
+            font-size: 1.5em;
+        }
+
+        /* Game Board - Perisa Look (450x450) */
+        #game-container {
+            width: 450px; 
+            height: 450px; 
+            margin: 20px auto;
+            position: relative; 
+            border: 3px solid #00bcd4;
+        }
+
+        /* Game Tile - Style and 2D Animation */
+        .game-tile {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em; 
+            font-weight: bold;
+            color: #fff;
+            background-color: #333;
+            border: 1px solid #000;
+            cursor: pointer;
+            
+            /* Core Animation: 0.3 வினாடிகளில் மென்மையாக நகரும் */
+            transition: transform 0.3s ease-in-out; 
+            
+            position: absolute; 
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .game-tile:hover {
+            background-color: #444;
+            box-shadow: 0 0 10px #09a8f8;
+        }
+
+        /* Empty Tile */
+        .empty-tile {
+            background-color: #1a1a1a;
+            cursor: default;
+            z-index: 0;
+            box-shadow: none;
+            border: none;
+        }
+
+        /* Message and Button Styles */
+        #message {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 1em;
+            font-family: 'Electrolize', sans-serif;
+            color: #0d0d0d;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #66bb6a;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-area">
+        <h1>8 SLIDING PUZZLE</h1>
+        
+        <div id="game-container">
+            </div>
+
+        <button onclick="startGame()">Start New Game</button>
+        <div id="message"></div>
+    </div>
+    
+    <script>
+        const TILE_SIZE = 150;
+        const BOARD_SIZE = 3;  
+        let board = [];
+        let tiles = [];
+        let gameContainer = document.getElementById('game-container');
+        let message = document.getElementById('message');
+
+        // Shuffling Algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Solvability Check (முக்கியம்!)
+        function isSolvable(arr) {
+            let inversions = 0;
+            for (let i = 0; i < arr.length - 1; i++) {
+                for (let j = i + 1; j < arr.length; j++) {
+                    if (arr[i] > arr[j] && arr[i] !== 0 && arr[j] !== 0) {
+                        inversions++;
+                    }
+                }
+            }
+            return inversions % 2 === 0;
+        }
+
+        // 1. Render the tiles in HTML
+        function renderBoard() {
+            gameContainer.innerHTML = ''; 
+            tiles = [];
+            
+            board.forEach((value, index) => {
+                const tile = document.createElement('div');
+                tile.className = 'game-tile';
+                tile.dataset.value = value;
+                
+                if (value === 0) {
+                    tile.classList.add('empty-tile');
+                } else {
+                    tile.textContent = value;
+                }
+                
+                gameContainer.appendChild(tile);
+                tiles.push(tile);
+                updateTilePosition(tile, index); 
+            });
+            attachEventListeners(); // Initial attachment of click events
+        }
+
+        // 2. Attach Click Listeners - நகர்வுக்குப் பிறகு இதை அழைப்பது அவசியம்
+        function attachEventListeners() {
+            tiles.forEach((tile, index) => {
+                tile.onclick = null; // பழைய கிளிக் ஈவென்ட்டை நீக்குக
+                
+                if (board[index] !== 0) {
+                    // புதிய நிலைக்கு ஏற்ப onclick-ஐ அமைக்கவும்
+                    tile.onclick = () => moveTile(index);
+                }
+            });
+        }
+
+        // 3. 2D Animation: Update tile position
+        function updateTilePosition(tileElement, index) {
+            const row = Math.floor(index / BOARD_SIZE);
+            const col = index % BOARD_SIZE;
+            tileElement.style.transform = `translate(${col * TILE_SIZE}px, ${row * TILE_SIZE}px)`;
+        }
+
+        // 4. Check if the move is valid
+        function isMoveValid(clickedIndex, emptyIndex) {
+            const clickedRow = Math.floor(clickedIndex / BOARD_SIZE);
+            const clickedCol = clickedIndex % BOARD_SIZE;
+            const emptyRow = Math.floor(emptyIndex / BOARD_SIZE);
+            const emptyCol = emptyIndex % BOARD_SIZE;
+
+            // அருகில் உள்ளதா என்று சோதிக்க
+            return (Math.abs(clickedRow - emptyRow) + Math.abs(clickedCol - emptyCol)) === 1;
+        }
+
+        // 5. Move the tile logic (The continuous movement FIX is here!)
+        function moveTile(clickedIndex) {
+            const emptyIndex = board.indexOf(0); 
+
+            if (isMoveValid(clickedIndex, emptyIndex)) {
+                // 1. Swap the values in the 'board' array
+                [board[clickedIndex], board[emptyIndex]] = [board[emptyIndex], board[clickedIndex]];
+
+                // 2. Swap the physical positions in the 'tiles' array
+                const clickedTile = tiles[clickedIndex];
+                const emptyTile = tiles[emptyIndex];
+                tiles[clickedIndex] = emptyTile;
+                tiles[emptyIndex] = clickedTile;
+                
+                // 3. Update their visual position with animation
+                updateTilePosition(clickedTile, emptyIndex);
+                updateTilePosition(emptyTile, clickedIndex);
+
+                // 4. CRITICAL: Re-attach click listeners based on the NEW POSITIONS
+                attachEventListeners(); 
+
+                checkWin();
+            }
+        }
+
+        // 6. Check for Win condition
+        function checkWin() {
+            const solvedBoard = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+            const isSolved = board.every((value, index) => value === solvedBoard[index]);
+
+            if (isSolved) {
+                message.textContent = "🎉 You Solved It! Congratulations! 🎉";
+                message.style.color = '#4CAF50';
+                tiles.forEach(tile => tile.onclick = null); // Disable moves
+            } else {
+                message.textContent = "Arrange the numbers 1-8 in order.";
+                message.style.color = '#fff';
+            }
+        }
+
+        // Game Start Function
+        function startGame() {
+            let initialBoard;
+            do {
+                initialBoard = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 0].slice());
+            } while (!isSolvable(initialBoard)); // தீர்க்கக்கூடிய புதிரை உருவாக்குகிறது
+
+            board = initialBoard;
+            renderBoard();
+            checkWin(); 
+        }
+
+        // Start game on page load
+        startGame();
+
+    </script>
+</body>
+</html>

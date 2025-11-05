@@ -1,0 +1,131 @@
+/* எழுத்துரு (Font) மற்றும் அடிப்படை ஸ்டைல்கள் */
+body {
+    margin: 0;
+    font-family: 'Electrolize', sans-serif; /* கேமிங் உணர்வை தரும் ஒரு எழுத்துரு */
+    color: white;
+    background-color: #000;
+}
+
+/* 1. Hero Section - பின்னணி (Background) */
+.hero-section {
+    width: 100%;
+    height: 100vh; /* முழு திரையையும் நிரப்ப */
+    /* உங்கள் கேமிங் படத்தை இங்கே பின்னணியாக பயன்படுத்தவும் */
+    background-image: url('your-gaming-background-image.jpg'); 
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    /* பின்னணியை சற்று இருட்டாக்கி, டெக்ஸ்ட் தெளிவாகத் தெரிய */
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.5); 
+}
+
+/* 2. Header மற்றும் Navigation Bar */
+.main-header {
+    display: flex;
+    justify-content: space-between; /* லோகோ மற்றும் லிங்க்குகளை இருபுறமும் வைக்க */
+    align-items: center;
+    padding: 15px 30px;
+    background-color: rgba(0, 0, 0, 0.4); /* சற்று வெளிப்படையான கருப்பு */
+}
+
+/* Logo Stye - நியான் விளைவு */
+.logo a {
+    text-decoration: none;
+    font-size: 2em; /* லோகோவை பெரிதாக்க */
+}
+.logo-sj {
+    color: #4CAF50; /* SJ-க்கு ஒரு நியான் பச்சை */
+    text-shadow: 0 0 10px #4CAF50, 0 0 20px #4CAF50, 0 0 40px #4CAF50;
+    letter-spacing: 2px;
+}
+.logo-text {
+    color: #fff;
+    font-size: 0.5em; /* ENTERTAINMENT எழுத்துக்களை சிறியதாக்க */
+    vertical-align: top;
+    margin-left: 5px;
+}
+
+/* Navigation Links Style */
+.topnav a {
+    color: #ccc;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin-left: 10px;
+    transition: color 0.3s;
+}
+.topnav a:hover {
+    color: #00bcd4; /* Hover செய்யும் போது நீல நியான் விளைவு */
+    text-shadow: 0 0 5px #00bcd4;
+}
+
+/* 3. Creator Info Box - நியான் பார்டர் */
+.creator-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 80%;
+    max-width: 500px;
+}
+.information{
+   
+}
+
+.info-box {
+    border: 2px solid #00bcd4; /* நீல நியான் பார்டர் */
+    box-shadow: 0 0 15px #00bcd4, 0 0 30px #00bcd4;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.creator-info p {
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #fff;
+}
+
+/* 4. Hamburger Icon (சின்ன திரைக்கு மட்டும்) */
+.icon {
+    display: none;
+    cursor: pointer;
+}
+.hamburger-icon {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+    box-shadow: 0 0 5px #fff;
+}
+.icon .hamburger-icon:before,
+.icon .hamburger-icon:after {
+    content: "";
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin-top: 5px;
+    box-shadow: 0 0 5px #fff;
+}
+
+/* மெனு தோற்றம் - சின்ன திரைகளுக்கு மட்டும் */
+@media screen and (max-width: 768px) {
+    .topnav {
+        display: none; /* ஆரம்பத்தில் லிங்க்குகளை மறைக்கவும் */
+        width: 100%;
+        position: absolute;
+        top: 60px; /* Header-இன் கீழே காட்ட */
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 10;
+    }
+    .topnav a {
+        float: none;
+        display: block;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .icon {
+        display: block; /* Hamburger Icon-ஐ காட்டவும் */
+    }
+}
